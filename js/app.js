@@ -1,6 +1,6 @@
 // Ad Pilot Intake Form - JavaScript
 const WEBHOOK_URL = 'https://kelly-ads.app.n8n.cloud/webhook/client-intake';
-const CLOUDINARY_UPLOAD_URL = 'https://api.cloudinary.com/v1_1/ad-pilot/auto/upload';
+const CLOUDINARY_UPLOAD_URL = 'https://api.cloudinary.com/v1_1/dtpqxuwby/auto/upload';
 const CLOUDINARY_UPLOAD_PRESET = 'intake_unsigned';
 
 let currentSection = 1;
