@@ -24,7 +24,40 @@
       <p class="subtitle">Complete this form during or after your client meeting</p>
     </header>
 
-    <form id="intakeForm" class="intake-form">
+    <!-- Client Selector -->
+    <div class="client-selector" id="clientSelector">
+      <div class="selector-card">
+        <h2>What would you like to do?</h2>
+        <div class="selector-buttons">
+          <button type="button" class="selector-btn" onclick="startNewClient()">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M16 6v20M6 16h20" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+            <span>New Client</span>
+          </button>
+          <button type="button" class="selector-btn" onclick="showClientList()">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M6 8h20M6 16h20M6 24h20" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+            <span>Load Existing</span>
+          </button>
+        </div>
+        <div class="client-dropdown" id="clientDropdown" style="display:none;">
+          <select id="clientSelect" onchange="loadSelectedClient()">
+            <option value="">Select a client...</option>
+          </select>
+          <div class="loading-spinner" id="clientLoading" style="display:none;">
+            <svg class="spinner" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="2" fill="none" stroke-dasharray="40" stroke-dashoffset="10"/></svg>
+            Loading...
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <form id="intakeForm" class="intake-form" style="display:none;">
+      <!-- Edit Mode Banner -->
+      <div class="edit-banner" id="editBanner" style="display:none;">
+        <span>Editing: <strong id="editClientName"></strong></span>
+        <span class="edit-id" id="editClientId"></span>
+        <button type="button" class="btn-back" onclick="backToSelector()">Back</button>
+      </div>
+
       <!-- Progress Indicator -->
       <div class="progress-bar">
         <div class="progress-fill" id="progressFill"></div>

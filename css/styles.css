@@ -645,6 +645,119 @@ select {
   margin-top: 24px;
 }
 
+/* Client Selector */
+.client-selector {
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+.selector-card {
+  padding: 48px 32px;
+  text-align: center;
+}
+
+.selector-card h2 {
+  font-size: 24px;
+  color: var(--gray-800);
+  margin-bottom: 32px;
+}
+
+.selector-buttons {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.selector-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 32px 48px;
+  background: var(--gray-50);
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--gray-700);
+}
+
+.selector-btn:hover {
+  border-color: var(--primary);
+  background: rgba(99, 102, 241, 0.05);
+}
+
+.selector-btn svg {
+  stroke: var(--primary);
+}
+
+.client-dropdown {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.client-dropdown select {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 16px;
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius);
+}
+
+.loading-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  color: var(--gray-500);
+}
+
+/* Edit Banner */
+.edit-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.edit-banner strong {
+  font-weight: 600;
+}
+
+.edit-id {
+  background: rgba(255,255,255,0.2);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-family: monospace;
+}
+
+.btn-back {
+  margin-left: auto;
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.btn-back:hover {
+  background: rgba(255,255,255,0.3);
+}
+
 /* Responsive */
 @media (max-width: 600px) {
   .container {
@@ -687,5 +800,23 @@ select {
   .form-nav .btn-next,
   .form-nav .btn-submit {
     margin-left: 0;
+  }
+
+  .selector-buttons {
+    flex-direction: column;
+  }
+
+  .selector-btn {
+    padding: 24px;
+  }
+
+  .edit-banner {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .btn-back {
+    width: 100%;
+    margin-top: 8px;
   }
 }

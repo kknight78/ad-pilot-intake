@@ -1,0 +1,102 @@
+{
+  "name": "Client Intake - Update Client",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "client-update",
+        "responseMode": "responseNode",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              { "name": "Access-Control-Allow-Origin", "value": "*" },
+              { "name": "Access-Control-Allow-Methods", "value": "POST, OPTIONS" },
+              { "name": "Access-Control-Allow-Headers", "value": "Content-Type" }
+            ]
+          }
+        }
+      },
+      "id": "webhook-update",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [260, 300],
+      "webhookId": "client-update"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $input.first().json.body;\n\n// Use existing clientId - don't generate new one\nconst clientId = body.clientId;\n\nif (!clientId) {\n  throw new Error('clientId is required for updates');\n}\n\n// Flatten data for Google Sheets\nreturn {\n  json: {\n    clientId,\n    timestamp: body.timestamp,\n    \n    // Business Info\n    businessName: body.businessName,\n    businessAddress: body.businessAddress,\n    businessPhone: body.businessPhone,\n    websiteUrl: body.websiteUrl || '',\n    socialHandle: body.socialHandle || '',\n    industry: body.industry,\n    \n    // Platforms\n    platforms: Array.isArray(body.platforms) ? body.platforms.join(', ') : body.platforms,\n    platformStatuses: typeof body.platformStatuses === 'string' ? body.platformStatuses : JSON.stringify(body.platformStatuses),\n    platformEmail: body.platformEmail,\n    platformNotes: body.platformNotes || '',\n    \n    // Portal Access\n    primaryContactName: body.primaryContactName,\n    primaryContactEmail: body.primaryContactEmail,\n    primaryContactPhone: body.primaryContactPhone || '',\n    additionalUsers: typeof body.additionalUsers === 'string' ? body.additionalUsers : JSON.stringify(body.additionalUsers),\n    \n    // Verification Docs\n    ownerName: body.ownerName,\n    businessLicenseUrl: body.businessLicenseUrl || '',\n    ownerIdFrontUrl: body.ownerIdFrontUrl || '',\n    ownerIdBackUrl: body.ownerIdBackUrl || '',\n    \n    // Brand Assets\n    logoUrl: body.logoUrl || '',\n    brandColors: body.brandColors || '',\n    tagline: body.tagline || '',\n    exteriorPhotoUrl: body.exteriorPhotoUrl || '',\n    interiorPhotoUrl: body.interiorPhotoUrl || '',\n    otherPhotosUrls: Array.isArray(body.otherPhotosUrls) ? body.otherPhotosUrls.join(', ') : (body.otherPhotosUrls || ''),\n    \n    // Avatar People\n    avatarPeople: typeof body.avatarPeople === 'string' ? body.avatarPeople : JSON.stringify(body.avatarPeople),\n    \n    // Plan & Pricing\n    selectedPlan: body.selectedPlan,\n    addons: Array.isArray(body.addons) ? body.addons.join(', ') : body.addons,\n    onboardingComplexity: body.onboardingComplexity,\n    onboardingTotal: body.onboardingTotal,\n    \n    // Notes\n    meetingNotes: body.meetingNotes || '',\n    followUpItems: body.followUpItems || '',\n    redFlags: body.redFlags || '',\n    \n    // Track update\n    lastUpdated: new Date().toISOString()\n  }\n};"
+      },
+      "id": "prepare-update",
+      "name": "Prepare Update Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1fiCJMWhZGOXIqNmxswt92qQxAQ70bjz6FKxpVQMNO2g",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Submissions",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": ["clientId"],
+          "schema": []
+        },
+        "options": {
+          "cellFormat": "USER_ENTERED"
+        }
+      },
+      "id": "update-sheet",
+      "name": "Update Google Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [700, 300],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "MmkEFg1TuHDH32HZ",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: true, clientId: $json.clientId, message: 'Client updated successfully' }) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              { "name": "Access-Control-Allow-Origin", "value": "*" }
+            ]
+          }
+        }
+      },
+      "id": "respond-update",
+      "name": "Respond Success",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [920, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{ "node": "Prepare Update Data", "type": "main", "index": 0 }]]
+    },
+    "Prepare Update Data": {
+      "main": [[{ "node": "Update Google Sheet", "type": "main", "index": 0 }]]
+    },
+    "Update Google Sheet": {
+      "main": [[{ "node": "Respond Success", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": { "executionOrder": "v1" }
+}

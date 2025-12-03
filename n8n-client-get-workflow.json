@@ -1,0 +1,94 @@
+{
+  "name": "Client Intake - Get Client",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "client-get",
+        "responseMode": "responseNode",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              { "name": "Access-Control-Allow-Origin", "value": "*" },
+              { "name": "Access-Control-Allow-Methods", "value": "GET, OPTIONS" },
+              { "name": "Access-Control-Allow-Headers", "value": "Content-Type" }
+            ]
+          }
+        }
+      },
+      "id": "webhook-get",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [260, 300],
+      "webhookId": "client-get"
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "1fiCJMWhZGOXIqNmxswt92qQxAQ70bjz6FKxpVQMNO2g",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Submissions",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "read-sheet",
+      "name": "Read All Clients",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [480, 300],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "MmkEFg1TuHDH32HZ",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the clientId from query params\nconst clientId = $input.first().json.query.clientId;\n\n// Find the matching client from all rows\nconst allClients = $input.all();\nconst client = allClients.find(item => item.json.clientId === clientId);\n\nif (!client) {\n  return { json: { error: 'Client not found', clientId } };\n}\n\n// Parse JSON fields back to objects\nconst data = { ...client.json };\n\ntry {\n  if (data.platformStatuses) data.platformStatuses = JSON.parse(data.platformStatuses);\n} catch(e) { data.platformStatuses = {}; }\n\ntry {\n  if (data.additionalUsers) data.additionalUsers = JSON.parse(data.additionalUsers);\n} catch(e) { data.additionalUsers = []; }\n\ntry {\n  if (data.avatarPeople) data.avatarPeople = JSON.parse(data.avatarPeople);\n} catch(e) { data.avatarPeople = []; }\n\n// Convert platforms string back to array\nif (data.platforms && typeof data.platforms === 'string') {\n  data.platforms = data.platforms.split(', ').filter(p => p);\n}\n\n// Convert addons string back to array\nif (data.addons && typeof data.addons === 'string') {\n  data.addons = data.addons.split(', ').filter(a => a);\n}\n\n// Convert otherPhotosUrls string back to array\nif (data.otherPhotosUrls && typeof data.otherPhotosUrls === 'string') {\n  data.otherPhotosUrls = data.otherPhotosUrls.split(', ').filter(u => u);\n}\n\nreturn { json: { client: data } };"
+      },
+      "id": "find-client",
+      "name": "Find Client",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [700, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              { "name": "Access-Control-Allow-Origin", "value": "*" }
+            ]
+          }
+        }
+      },
+      "id": "respond-get",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [920, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{ "node": "Read All Clients", "type": "main", "index": 0 }]]
+    },
+    "Read All Clients": {
+      "main": [[{ "node": "Find Client", "type": "main", "index": 0 }]]
+    },
+    "Find Client": {
+      "main": [[{ "node": "Respond", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": { "executionOrder": "v1" }
+}
