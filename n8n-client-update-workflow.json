@@ -63,8 +63,8 @@
       "position": [700, 300],
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "MmkEFg1TuHDH32HZ",
-          "name": "Google Sheets account 2"
+          "id": "g3qdIZMDD4wzQ69l",
+          "name": "Google Sheets account"
         }
       }
     },
